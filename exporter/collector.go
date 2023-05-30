@@ -225,12 +225,10 @@ func (wc *WeatherCollector) Collect(ch chan<- prometheus.Metric) {
 }
 
 func (wc *WeatherCollector) update(msg weatherflow.Message, apiToken string) {
-	deviceID := msg.GetDeviceID()
-
 	switch m := msg.(type) {
 	case *weatherflow.MessageObsSt:
 		timestamp := time.Unix(int64(m.Obs[0].TimeEpoch), 0)
-		deviceIDStr := strconv.Itoa(deviceID)
+		deviceIDStr := strconv.Itoa(m.DeviceID)
 		wc.metric.WindLull = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
 			desc.WindLull,
 			prometheus.GaugeValue,
@@ -366,7 +364,7 @@ func (wc *WeatherCollector) update(msg weatherflow.Message, apiToken string) {
 
 	case *weatherflow.MessageRapidWind:
 		timestamp := time.Unix(int64(m.Ob.TimeEpoch), 0)
-		deviceIDStr := strconv.Itoa(deviceID)
+		deviceIDStr := strconv.Itoa(m.DeviceID)
 		wc.metric.WindSpeed = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
 			desc.WindSpeed,
 			prometheus.GaugeValue,

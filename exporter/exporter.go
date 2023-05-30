@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	timeoutDuration = 30 * time.Minute
+	idleTimeout = 30 * time.Minute
 )
 
 type WeatherExporter struct {
@@ -61,7 +61,7 @@ func (we *WeatherExporter) ScrapeHandler(w http.ResponseWriter, r *http.Request)
 
 	collector, ok := collectorsForToken[deviceID]
 	if ok {
-		collector.timer.Reset(timeoutDuration)
+		collector.timer.Reset(idleTimeout)
 	} else {
 		collector = NewWeatherCollector(deviceID)
 		collectorsForToken[deviceID] = collector
@@ -69,7 +69,7 @@ func (we *WeatherExporter) ScrapeHandler(w http.ResponseWriter, r *http.Request)
 
 		client, clientExists := we.clients[apiToken]
 		if !clientExists {
-			client = weatherflow.NewClient(apiToken, prefixedLogger(apiToken, log.Printf))
+			client = weatherflow.NewClient(apiToken, nil, prefixedLogger(apiToken, log.Printf))
 			we.clients[apiToken] = client
 			client.Start(func(msg weatherflow.Message) {
 				collector.update(msg, apiToken)
@@ -96,7 +96,7 @@ func (we *WeatherExporter) ScrapeHandler(w http.ResponseWriter, r *http.Request)
 }
 
 func (we *WeatherExporter) initCollectorTimer(collector *WeatherCollector, apiToken string, deviceID int) {
-	collector.timer = time.AfterFunc(timeoutDuration, func() {
+	collector.timer = time.AfterFunc(idleTimeout, func() {
 		we.mu.Lock()
 		defer we.mu.Unlock()
 

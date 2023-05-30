@@ -1,6 +1,6 @@
 # weatherflow_exporter
 
-weatherflow_exporter is a Prometheus exporter for
+weatherflow_exporter is a [Prometheus](https://prometheus.io) exporter for
 [WeatherFlow Tempest](https://weatherflow.com/tempest-home-weather-system/)
 weather stations.
 
@@ -31,7 +31,8 @@ are no other configuration options.
 ## Grafana dashboard
 
 TBD.  You can get some inspiration from the
-[Mussel Rock Weather](https://mr.ethereal.net) dashboard, which this powers.
+[Mussel Rock Weather](https://mr.ethereal.net) dashboard, which is powered by
+this exporter.
 
 [Dave Schmid](https://github.com/lux4rd0) has also built some excellent
 dashboards as part of his own
