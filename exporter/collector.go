@@ -117,7 +117,7 @@ var (
 		),
 		PrecipitationAnalysisType: prometheus.NewDesc(
 			"weatherflow_precipitation_analysis_type",
-			"Precipitation analysis type (0: none, 1: Rain Check with user display on, 2: Rain Check with user display off",
+			"Precipitation analysis type (0: none, 1: Rain Check with user display on, 2: Rain Check with user display off)",
 			labelNames, nil,
 		),
 
