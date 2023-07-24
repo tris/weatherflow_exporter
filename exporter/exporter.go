@@ -45,10 +45,14 @@ func prefixedLogger(apiToken string, logFunc weatherflow.Logf) weatherflow.Logf 
 }
 
 func (we *WeatherExporter) ScrapeHandler(w http.ResponseWriter, r *http.Request) {
-	apiToken := r.URL.Query().Get("token")
+	apiToken := r.URL.Query().Get("access_token")
+	if apiToken == "" {
+		// Retain backward compatibility for now
+		apiToken = r.URL.Query().Get("token")
+	}
 	deviceID, err := strconv.Atoi(r.URL.Query().Get("device_id"))
 	if apiToken == "" || err != nil {
-		http.Error(w, "Error: Missing or malformed query parameters 'token' and/or 'device_id'", http.StatusBadRequest)
+		http.Error(w, "Error: Missing or malformed query parameters 'access_token' and/or 'device_id'", http.StatusBadRequest)
 		return
 	}
 
