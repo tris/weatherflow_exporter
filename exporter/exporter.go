@@ -72,6 +72,14 @@ func (we *WeatherExporter) ScrapeHandler(w http.ResponseWriter, r *http.Request)
 			client = weatherflow.NewClient(apiToken, nil, prefixedLogger(apiToken, log.Printf))
 			we.clients[apiToken] = client
 			client.Start(func(msg weatherflow.Message) {
+				deviceID, ok := msg.GetDeviceID()
+				if !ok {
+					return
+				}
+				collector, ok := collectorsForToken[deviceID]
+				if !ok {
+					return
+				}
 				collector.update(msg, apiToken)
 			})
 		}

@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/prometheus/client_golang v1.15.1
-	github.com/tris/weatherflow v0.3.0
+	github.com/tris/weatherflow v0.3.1
 )
 
 require (
