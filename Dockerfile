@@ -1,5 +1,5 @@
-FROM golang:1.20-alpine as builder
-MAINTAINER Tristan Horn <tristan+docker@ethereal.net>
+FROM golang:1.24-alpine AS builder
+LABEL org.opencontainers.image.authors="Tristan Horn <tristan+docker@ethereal.net>"
 WORKDIR /app
 RUN apk add --no-cache upx
 COPY go.mod go.sum ./
