@@ -35,7 +35,8 @@ builds:
   - goarch: arm64
     goarm: 6
   hooks:
-    post: upx --lzma {{ .Path }}
+    post:
+    - cmd: sh -c 'if [ "{{ .Os }}" != "darwin" ]; then upx --lzma {{ .Path }}; fi'
 
 archives:
 - format: tar.gz
