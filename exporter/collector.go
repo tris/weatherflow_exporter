@@ -259,12 +259,15 @@ func (wc *WeatherCollector) update(msg weatherflow.Message, apiToken string) {
 			float64(m.Obs[0].WindSampleInterval),
 			deviceIDStr,
 		))
-		wc.metric.StationPressure = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.StationPressure,
-			prometheus.GaugeValue,
-			m.Obs[0].StationPressure,
-			deviceIDStr,
-		))
+		stationPressure := m.Obs[0].StationPressure
+		if stationPressure != nil {
+			wc.metric.StationPressure = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.StationPressure,
+				prometheus.GaugeValue,
+				*stationPressure,
+				deviceIDStr,
+			))
+		}
 		airTemperature := m.Obs[0].AirTemperature
 		if airTemperature != nil {
 			wc.metric.AirTemperature = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
