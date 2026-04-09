@@ -229,141 +229,175 @@ func (wc *WeatherCollector) update(msg weatherflow.Message, apiToken string) {
 	case *weatherflow.MessageObsSt:
 		timestamp := time.Unix(int64(m.Obs[0].TimeEpoch), 0)
 		deviceIDStr := strconv.Itoa(m.DeviceID)
-		wc.metric.WindLull = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.WindLull,
-			prometheus.GaugeValue,
-			m.Obs[0].WindLull,
-			deviceIDStr,
-		))
-		wc.metric.WindAvg = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.WindAvg,
-			prometheus.GaugeValue,
-			m.Obs[0].WindAvg,
-			deviceIDStr,
-		))
-		wc.metric.WindGust = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.WindGust,
-			prometheus.GaugeValue,
-			m.Obs[0].WindGust,
-			deviceIDStr,
-		))
-		wc.metric.WindDirectionAvg = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.WindDirectionAvg,
-			prometheus.GaugeValue,
-			float64(m.Obs[0].WindDirection),
-			deviceIDStr,
-		))
-		wc.metric.WindSampleInterval = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.WindSampleInterval,
-			prometheus.GaugeValue,
-			float64(m.Obs[0].WindSampleInterval),
-			deviceIDStr,
-		))
-		stationPressure := m.Obs[0].StationPressure
-		if stationPressure != nil {
+		obs := m.Obs[0]
+		if obs.WindLull != nil {
+			wc.metric.WindLull = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.WindLull,
+				prometheus.GaugeValue,
+				*obs.WindLull,
+				deviceIDStr,
+			))
+		}
+		if obs.WindAvg != nil {
+			wc.metric.WindAvg = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.WindAvg,
+				prometheus.GaugeValue,
+				*obs.WindAvg,
+				deviceIDStr,
+			))
+		}
+		if obs.WindGust != nil {
+			wc.metric.WindGust = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.WindGust,
+				prometheus.GaugeValue,
+				*obs.WindGust,
+				deviceIDStr,
+			))
+		}
+		if obs.WindDirection != nil {
+			wc.metric.WindDirectionAvg = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.WindDirectionAvg,
+				prometheus.GaugeValue,
+				float64(*obs.WindDirection),
+				deviceIDStr,
+			))
+		}
+		if obs.WindSampleInterval != nil {
+			wc.metric.WindSampleInterval = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.WindSampleInterval,
+				prometheus.GaugeValue,
+				float64(*obs.WindSampleInterval),
+				deviceIDStr,
+			))
+		}
+		if obs.StationPressure != nil {
 			wc.metric.StationPressure = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
 				desc.StationPressure,
 				prometheus.GaugeValue,
-				*stationPressure,
+				*obs.StationPressure,
 				deviceIDStr,
 			))
 		}
-		airTemperature := m.Obs[0].AirTemperature
-		if airTemperature != nil {
+		if obs.AirTemperature != nil {
 			wc.metric.AirTemperature = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
 				desc.AirTemperature,
 				prometheus.GaugeValue,
-				*airTemperature,
+				*obs.AirTemperature,
 				deviceIDStr,
 			))
 		}
-		relativeHumidity := m.Obs[0].RelativeHumidity
-		if relativeHumidity != nil {
+		if obs.RelativeHumidity != nil {
 			wc.metric.RelativeHumidity = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
 				desc.RelativeHumidity,
 				prometheus.GaugeValue,
-				*relativeHumidity,
+				*obs.RelativeHumidity,
 				deviceIDStr,
 			))
 		}
-		wc.metric.Illuminance = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.Illuminance,
-			prometheus.GaugeValue,
-			float64(m.Obs[0].Illuminance),
-			deviceIDStr,
-		))
-		wc.metric.UV = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.UV,
-			prometheus.GaugeValue,
-			float64(m.Obs[0].UV),
-			deviceIDStr,
-		))
-		wc.metric.SolarRadiation = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.SolarRadiation,
-			prometheus.GaugeValue,
-			float64(m.Obs[0].SolarRadiation),
-			deviceIDStr,
-		))
-		wc.metric.RainAccumulated = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.RainAccumulated,
-			prometheus.CounterValue,
-			m.Obs[0].RainAccumulated,
-			deviceIDStr,
-		))
-		wc.metric.PrecipitationType = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.PrecipitationType,
-			prometheus.GaugeValue,
-			float64(m.Obs[0].PrecipitationType),
-			deviceIDStr,
-		))
-		wc.metric.LightningStrikeAvgDistance = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.LightningStrikeAvgDistance,
-			prometheus.GaugeValue,
-			float64(m.Obs[0].LightningStrikeAvgDistance),
-			deviceIDStr,
-		))
-		wc.metric.LightningStrikeCount = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.LightningStrikeCount,
-			prometheus.CounterValue,
-			float64(m.Obs[0].LightningStrikeCount),
-			deviceIDStr,
-		))
-		wc.metric.Battery = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.Battery,
-			prometheus.GaugeValue,
-			m.Obs[0].Battery,
-			deviceIDStr,
-		))
-		wc.metric.ReportInterval = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.ReportInterval,
-			prometheus.GaugeValue,
-			float64(m.Obs[0].ReportInterval),
-			deviceIDStr,
-		))
-		wc.metric.LocalDailyRainAccumulation = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.LocalDailyRainAccumulation,
-			prometheus.CounterValue,
-			m.Obs[0].LocalDailyRainAccumulation,
-			deviceIDStr,
-		))
-		wc.metric.RainAccumulatedFinal = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.RainAccumulatedFinal,
-			prometheus.CounterValue,
-			m.Obs[0].RainAccumulatedFinal,
-			deviceIDStr,
-		))
-		wc.metric.LocalDailyRainAccumulationFinal = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.LocalDailyRainAccumulationFinal,
-			prometheus.CounterValue,
-			m.Obs[0].LocalDailyRainAccumulationFinal,
-			deviceIDStr,
-		))
-		wc.metric.PrecipitationAnalysisType = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
-			desc.PrecipitationAnalysisType,
-			prometheus.GaugeValue,
-			float64(m.Obs[0].PrecipitationAnalysisType),
-			deviceIDStr,
-		))
+		if obs.Illuminance != nil {
+			wc.metric.Illuminance = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.Illuminance,
+				prometheus.GaugeValue,
+				float64(*obs.Illuminance),
+				deviceIDStr,
+			))
+		}
+		if obs.UV != nil {
+			wc.metric.UV = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.UV,
+				prometheus.GaugeValue,
+				float64(*obs.UV),
+				deviceIDStr,
+			))
+		}
+		if obs.SolarRadiation != nil {
+			wc.metric.SolarRadiation = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.SolarRadiation,
+				prometheus.GaugeValue,
+				float64(*obs.SolarRadiation),
+				deviceIDStr,
+			))
+		}
+		if obs.RainAccumulated != nil {
+			wc.metric.RainAccumulated = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.RainAccumulated,
+				prometheus.CounterValue,
+				*obs.RainAccumulated,
+				deviceIDStr,
+			))
+		}
+		if obs.PrecipitationType != nil {
+			wc.metric.PrecipitationType = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.PrecipitationType,
+				prometheus.GaugeValue,
+				float64(*obs.PrecipitationType),
+				deviceIDStr,
+			))
+		}
+		if obs.LightningStrikeAvgDistance != nil {
+			wc.metric.LightningStrikeAvgDistance = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.LightningStrikeAvgDistance,
+				prometheus.GaugeValue,
+				float64(*obs.LightningStrikeAvgDistance),
+				deviceIDStr,
+			))
+		}
+		if obs.LightningStrikeCount != nil {
+			wc.metric.LightningStrikeCount = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.LightningStrikeCount,
+				prometheus.CounterValue,
+				float64(*obs.LightningStrikeCount),
+				deviceIDStr,
+			))
+		}
+		if obs.Battery != nil {
+			wc.metric.Battery = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.Battery,
+				prometheus.GaugeValue,
+				*obs.Battery,
+				deviceIDStr,
+			))
+		}
+		if obs.ReportInterval != nil {
+			wc.metric.ReportInterval = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.ReportInterval,
+				prometheus.GaugeValue,
+				float64(*obs.ReportInterval),
+				deviceIDStr,
+			))
+		}
+		if obs.LocalDailyRainAccumulation != nil {
+			wc.metric.LocalDailyRainAccumulation = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.LocalDailyRainAccumulation,
+				prometheus.CounterValue,
+				*obs.LocalDailyRainAccumulation,
+				deviceIDStr,
+			))
+		}
+		if obs.RainAccumulatedFinal != nil {
+			wc.metric.RainAccumulatedFinal = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.RainAccumulatedFinal,
+				prometheus.CounterValue,
+				*obs.RainAccumulatedFinal,
+				deviceIDStr,
+			))
+		}
+		if obs.LocalDailyRainAccumulationFinal != nil {
+			wc.metric.LocalDailyRainAccumulationFinal = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.LocalDailyRainAccumulationFinal,
+				prometheus.CounterValue,
+				*obs.LocalDailyRainAccumulationFinal,
+				deviceIDStr,
+			))
+		}
+		if obs.PrecipitationAnalysisType != nil {
+			wc.metric.PrecipitationAnalysisType = prometheus.NewMetricWithTimestamp(timestamp, prometheus.MustNewConstMetric(
+				desc.PrecipitationAnalysisType,
+				prometheus.GaugeValue,
+				float64(*obs.PrecipitationAnalysisType),
+				deviceIDStr,
+			))
+		}
 
 	case *weatherflow.MessageRapidWind:
 		timestamp := time.Unix(int64(m.Ob.TimeEpoch), 0)

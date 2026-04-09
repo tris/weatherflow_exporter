@@ -6,7 +6,7 @@ toolchain go1.24.0
 
 require (
 	github.com/prometheus/client_golang v1.21.0
-	github.com/tris/weatherflow v0.3.2
+	github.com/tris/weatherflow v0.3.3
 )
 
 require (
